@@ -1,0 +1,28 @@
+.chartBodyMain{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    width:100%;
+    background-color: rgba(174, 199, 199,0.2);
+
+}
+
+.domainBlock{
+    padding:10px;
+    padding-left:40px;
+    width:20%;
+    float:left;
+    align-items: center;
+    justify-content: center;
+}
+
+.chartMain{
+    padding:70px;
+    width:80%;
+    float:right;
+    
+}
+
+.card-body{
+    background-color: rgba(174, 199, 199,0.2);
+}
