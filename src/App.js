@@ -3,6 +3,12 @@ import { HorizontalBar as BarChart } from 'react-chartjs-2';
 import './app.css';
 import './Component/loadingScreen.js';
 import LoadingScreen from './Component/loadingScreen.js';
+import logo from './images/loading.png';
+import eCommerceImage from './images/eCommerce3.gif';
+import foodImage from './images/food.gif';
+import groceryImage from './images/grocery2.gif';
+import streamingImage from './images/streaming.gif';
+import eLearningImage from './images/book.gif';
 
 // var dataList= [ 70.0, 45.0, 34.0, 33.0, 16]
 // const updatedDataList=[100, 64.28571428571429, 48.57142857142857, 47.14285714285714, 22.857142857142858]
@@ -47,17 +53,40 @@ class App extends Component {
 
 	state = {
 		domains: [
-			'Ecommerce sites',
-			'Streaming sites',
-			'Food Delivery sites',
-			'Grocery Delivery sites',
-			'E-Learning sites'
+			{
+				domainName: 'Ecommerce sites',
+				checkedState: false,
+				image: eCommerceImage
+			},
+			{
+				domainName: 'Streaming sites',
+				checkedState: false,
+				image: streamingImage
+			},
+			{
+				domainName: 'Food Delivery sites',
+				checkedState: false,
+				image: foodImage
+			},
+			{
+				domainName: 'Grocery Delivery sites',
+				checkedState: false,
+				image: groceryImage
+			},
+			{
+				domainName: 'E-Learning sites',
+				checkedState: false,
+				image: eLearningImage
+			}
 		],
+
 		dataList: [],
 		time: '',
 		selectedDomains: [],
 		labelList: [],
-		loading: true
+		loading: true,
+
+		counter: 0
 	};
 
 	getData = () => {
@@ -94,6 +123,9 @@ class App extends Component {
 	// }
 
 	onClickHandler = (event) => {
+		
+		// this.setState({domain[checked]:true});
+		// console.log("inside onClick handler : ",domain)
 		var checkedList = this.state.selectedDomains;
 		const checkedState = event.target.checked;
 		const item = event.target.name;
@@ -135,6 +167,29 @@ class App extends Component {
 		// now that the state is updated, I need to post it to flask
 	};
 
+	displayOptions = () => {
+		return (
+			<div className="card-deck">
+				{this.state.domains.map((domain, i) => (
+					<div class="cardFirst">
+						<img class="card-img-top" src={domain.image} alt="Card image" />
+						<div class="card-bodyFirst">
+							<h5 class="card-title">{domain.domainName}</h5>
+							<input
+								type="checkbox"
+								class="form-check-input"
+								name={domain.domainName}
+								id={domain.domainName}
+								onClick={this.onClickHandler}
+							/>
+						</div>
+					</div>
+				))}
+			</div>
+	
+		);
+	};
+
 	displayDomain = () => {
 		{
 			console.log('datalist:::: ', this.state.dataList);
@@ -151,12 +206,13 @@ class App extends Component {
 							<input
 								type="checkbox"
 								class="form-check-input"
-								name={domain}
-								id={domain}
+								name={domain.domainName}
+								id={domain.domainName}
 								onClick={this.onClickHandler}
+								checked={domain.checked}
 							/>
 							<label className="form-check-label" for="materialChecked2">
-								{domain}
+								{domain.domainName}
 							</label>
 						</div>
 					))}
@@ -171,21 +227,26 @@ class App extends Component {
 			<React.Fragment>
 				<div className="App-header">{this.state.time}</div>
 				<div className="chartsBody">
-					<div className="chartBodyMain">
-						<div className="domainBlock">{this.displayDomain()}</div>
+				
+					{this.state.selectedDomains.length <= 0 ? (
+						<div>{this.displayOptions()}</div>
+					) : (
+						<div className="chartBodyMain">
+							<div className="domainBlock">{this.displayDomain()}</div>
 
-						<div className="chartMain">
-							{this.state.loading ? (
-								<LoadingScreen />
-							) : (
-								<BarChart
-									options={options_StackedBar}
-									data={this.getData()}
-									legend={legend_StackedBar}
-								/>
-							)}
+							<div className="chartMain">
+								{this.state.loading ? (
+									<LoadingScreen />
+								) : (
+									<BarChart
+										options={options_StackedBar}
+										data={this.getData()}
+										legend={legend_StackedBar}
+									/>
+								)}
+							</div>
 						</div>
-					</div>
+					)}
 				</div>
 			</React.Fragment>
 		);

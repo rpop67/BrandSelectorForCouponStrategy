@@ -21,7 +21,7 @@ dict_map={"Ecommerce sites":eCommerceSites,"Streaming sites":streamingSites,"Foo
 def get_current_time():
     return {'block':
         {
-        'time': "hululu",
+        'time': "Brand Analyser for UK Base",
         'dataList':[10.0, 10.0, 10.0, 10.0, 10.0 ],
         'labelList':["","","","","",""]
         }
@@ -51,6 +51,11 @@ def result():
             newList=newList+list(resDict.keys())
         res=CouponSelection(newList,5)
     print(list(res.keys()),list(res.values()))
+
+    resValue=list(res.values())
+    maxVal=resValue[0]
+    for i in range(len(resValue)):
+        resValue[i]=round(resValue[i]/maxVal*100)
         
 
     
@@ -59,6 +64,6 @@ def result():
         {
             'list':recv_data,
             'labelList':list(res.keys()),
-            'dataList':list(res.values())
+            'dataList':resValue
         }
     }

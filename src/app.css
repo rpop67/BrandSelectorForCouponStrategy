@@ -9,6 +9,7 @@
 
 }
 
+
 .domainBlock{
     padding:10px;
     padding-left:40px;
@@ -28,4 +29,25 @@
 
 .card-body{
     background-color: rgba(174, 199, 199,0.2);
+}
+
+.cardFirst{
+    width:200px;
+    margin:30px;
+    border-radius:16px;
+    box-shadow: 3px 6px rgba(0,0,0,0.2);
+}
+
+.card-deck{
+    display:flex;
+    align-items: center;
+    justify-content: center;  
+    padding-left: 40px;
+    position:fixed;
+    width:100%;
+    height:100%;
+}
+
+.options-body{
+    
 }
