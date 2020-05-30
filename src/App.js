@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { HorizontalBar as BarChart } from 'react-chartjs-2';
 import './app.css';
+import './Component/loadingScreen.js';
+import LoadingScreen from './Component/loadingScreen.js';
 
 // var dataList= [ 70.0, 45.0, 34.0, 33.0, 16]
 // const updatedDataList=[100, 64.28571428571429, 48.57142857142857, 47.14285714285714, 22.857142857142858]
@@ -23,9 +25,10 @@ class App extends Component {
 		console.log('CALLLLED');
 		fetch('/timeBlock').then((res) => res.json()).then((data) => {
 			this.setState({
+				loading: false,
 				time: data.block.time,
 				dataList: data.block.dataList,
-				labelList:data.block.labelList
+				labelList: data.block.labelList
 			});
 
 			console.log('mounting... ', this.state.dataList);
@@ -53,12 +56,13 @@ class App extends Component {
 		dataList: [],
 		time: '',
 		selectedDomains: [],
-		labelList:[]
+		labelList: [],
+		loading: true
 	};
 
 	getData = () => {
 		const listReturned = this.state.dataList;
-		const labelListReturned=this.state.labelList;
+		const labelListReturned = this.state.labelList;
 
 		const data_StackedBar = {
 			labels: labelListReturned,
@@ -107,7 +111,7 @@ class App extends Component {
 				}
 			}
 		}
-		this.setState({ selectedDomains: checkedList }, () => {
+		this.setState({ selectedDomains: checkedList, loading: true }, () => {
 			console.log(checkedList);
 			fetch('/resultPost', {
 				method: 'POST',
@@ -120,8 +124,11 @@ class App extends Component {
 					return response.json();
 				})
 				.then((data) => {
-					this.setState({ dataList: data.block.dataList,
-						labelList:data.block.labelList});
+					this.setState({
+						dataList: data.block.dataList,
+						labelList: data.block.labelList,
+						loading: false
+					});
 					console.log('printing list from flask: ', data.block.list);
 				});
 		});
@@ -168,7 +175,15 @@ class App extends Component {
 						<div className="domainBlock">{this.displayDomain()}</div>
 
 						<div className="chartMain">
-							<BarChart options={options_StackedBar} data={this.getData()} legend={legend_StackedBar} />
+							{this.state.loading ? (
+								<LoadingScreen />
+							) : (
+								<BarChart
+									options={options_StackedBar}
+									data={this.getData()}
+									legend={legend_StackedBar}
+								/>
+							)}
 						</div>
 					</div>
 				</div>

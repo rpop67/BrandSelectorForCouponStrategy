@@ -47,7 +47,8 @@ def result():
     else:
         newList=[]
         for lists in recv_data:
-            newList=newList+(findTopSites(dict_map[lists],3,"la").keys())
+            resDict=findTopSites(dict_map[lists],3,"la")
+            newList=newList+list(resDict.keys())
         res=CouponSelection(newList,5)
     print(list(res.keys()),list(res.values()))
         

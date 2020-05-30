@@ -31,7 +31,7 @@ code {
 }
 
 .chartBody{
-  max-height:40vh;
+  min-height:40vh;
   width:70%;
   justify-items: center;
   align-items: center;

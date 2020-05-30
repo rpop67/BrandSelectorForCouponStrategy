@@ -11,9 +11,9 @@ def CouponSelection(listOfSites,n):
     middle=length//2+1
     list1=listOfSites[:middle]
     list2=listOfSites[middle:]
-    topList1=findTopSites(list1,n-1,"null")
+    topList1=list(findTopSites(list1,n-1,"null").keys())
     print(topList1)
-    topList2=findTopSites(list2,n-1,"null")
+    topList2=list(findTopSites(list2,n-1,"null").keys())
     print(topList2)
     finalList=topList1+topList2
     sitesForCoupons=findTopSites(finalList,n,"couponSelction.csv")
