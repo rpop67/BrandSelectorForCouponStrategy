@@ -24,7 +24,8 @@ class App extends Component {
 		fetch('/timeBlock').then((res) => res.json()).then((data) => {
 			this.setState({
 				time: data.block.time,
-				dataList: data.block.dataList
+				dataList: data.block.dataList,
+				labelList:data.block.labelList
 			});
 
 			console.log('mounting... ', this.state.dataList);
@@ -51,14 +52,16 @@ class App extends Component {
 		],
 		dataList: [],
 		time: '',
-		selectedDomains: []
+		selectedDomains: [],
+		labelList:[]
 	};
 
 	getData = () => {
 		const listReturned = this.state.dataList;
+		const labelListReturned=this.state.labelList;
 
 		const data_StackedBar = {
-			labels: [ 'Amazon', 'eBay', 'Tesco', 'Argos', 'Netflix' ],
+			labels: labelListReturned,
 			datasets: [
 				{
 					label: 'Popularity',
@@ -104,23 +107,25 @@ class App extends Component {
 				}
 			}
 		}
-		this.setState({ selectedDomains: checkedList });
-		// now that the state is updated, I need to post it to flask
-		console.log(checkedList);
-		fetch('/resultPost', {
-			method: 'POST',
-			headers: {
-				content_type: 'application/json'
-			},
-			body: JSON.stringify(this.state.selectedDomains)
-		})
-			.then((response) => {
-				return response.json();
+		this.setState({ selectedDomains: checkedList }, () => {
+			console.log(checkedList);
+			fetch('/resultPost', {
+				method: 'POST',
+				headers: {
+					content_type: 'application/json'
+				},
+				body: JSON.stringify(this.state.selectedDomains)
 			})
-			.then((data) => {
-				this.setState({ dataList: data.block.dataList });
-				console.log('printing list from flask: ', data.block.list);
-			});
+				.then((response) => {
+					return response.json();
+				})
+				.then((data) => {
+					this.setState({ dataList: data.block.dataList,
+						labelList:data.block.labelList});
+					console.log('printing list from flask: ', data.block.list);
+				});
+		});
+		// now that the state is updated, I need to post it to flask
 	};
 
 	displayDomain = () => {

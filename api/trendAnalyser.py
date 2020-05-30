@@ -1,8 +1,8 @@
 from pytrends.request import TrendReq
 import numpy as np
-import matplotlib.pyplot as plt
+import itertools
 import random
-import pandas as pd
+# import pandas as pd
 
 
 def CouponSelection(listOfSites,n):
@@ -70,12 +70,8 @@ def findTopSites(listOfSites,n,fileName):
     # print(finalList)
     # print(finalKeywords)
 
-    y_pos = np.arange(len(finalKeywords))
+    # y_pos = np.arange(len(finalKeywords))
 
-    # plt.barh(y_pos,finalList,align='center',alpha=0.5)
-    # plt.yticks(y_pos,finalKeywords)
-    # plt.xlabel('Average popularity')
-    # # plt.show()
 
 
 # for dicts
@@ -95,39 +91,22 @@ def findTopSites(listOfSites,n,fileName):
 
     # in python3 dict.values returns a view of dictionary's value hence needs to be converted to list
     # print(list(sortedDict.values()),list(sortedDict.keys()))
-    sortedVals = list(sortedDict.values())
-    sortedKeys = list(sortedDict.keys())
-    plt.barh(y_pos, sortedVals, align='center', alpha=0.5)
-    plt.yticks(y_pos, sortedKeys)
-    plt.xlabel('average popularity')
+    # sortedVals = list(sortedDict.values())
+    # sortedKeys = list(sortedDict.keys())
+    # plt.barh(y_pos, sortedVals, align='center', alpha=0.5)
+    # plt.yticks(y_pos, sortedKeys)
+    # plt.xlabel('average popularity')
     # plt.show()
 
-    # to get top 5 eCommerce sites:
+    # to get top 5  sites in dict format:
+    resDict = dict(itertools.islice(sortedDict.items(), n))  
 
-    topECommerce = []
+    # topECommerce = []
     # print(list(sortedDict))
-    for site in list(sortedDict)[0:n]:
-        topECommerce.append(site)
-    return topECommerce
+    # for site in list(sortedDict)[0:n]:
+    #     topECommerce.append(site)
+    # return topECommerce
+    return resDict
+    print(resDict)
 
-topN=3
-eCommerceSites=['ASOS', 'Amazon', 'eBay', 'Argos','Currys', 'Forever 21', 'John Lewis', 'Marks and Spencer']
-topECommerceSites=findTopSites(eCommerceSites,topN,'eCommerce.csv')
-foodDeliverySites=['Deliveroo','Just Eat','UberEats','One Delivery','Foodhub','SUPPER','Macro Meals','HelloFresh','Prep Perfect']
-topFoodDeliverySites=findTopSites(foodDeliverySites,topN,'foodSites.csv')
-groceryDeliverySites=['Morrisons','Amazon Fresh','ocado','British Corner Shop', 'Tesco','riverford organic farmers','Planet Organic']
-topGroceryDeliverySites=findTopSites(groceryDeliverySites,topN,'grocerySites.csv')
-streamingSites=['Disney+','Netflix','Amazon Prime','mubi','now tv','talk talk','sky store','roku','BT']
-topStreamingSites=findTopSites(streamingSites,topN,'streamingSites.csv')
-eLearningSites=['learndirect','Day One','udemy','titus learning','Udacity','Virtual College','Brightwave','Kallidus','looop']
-topELearningSites=findTopSites(eLearningSites,topN,'learningSites.csv')
-# print(topECommerceSites)
-# print(topFoodDeliverySites)
-# print(topGroceryDeliverySites)
-# print(topStreamingSites)
-# print(topELearningSites)
-combinedList=topGroceryDeliverySites+topFoodDeliverySites+topECommerceSites+topStreamingSites+topELearningSites
-SitesForCoupons=CouponSelection(combinedList,5)
-print("*************Sites for coupons*********")
-print(SitesForCoupons)
 
