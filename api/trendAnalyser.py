@@ -20,93 +20,98 @@ def CouponSelection(listOfSites,n):
     return sitesForCoupons
 
 
-def findTopSites(listOfSites,n,fileName):
-    length=len(listOfSites)
-    kw_list1=listOfSites[:5]
-    # print(kw_list1)
-    # kw_list1 = ['ASOS', 'Amazon', 'eBay', 'Tesco', 'Argos']
-    pytrends1 = TrendReq(retries=10, backoff_factor=0.5)
-    kw_list2=listOfSites[5:]
-    # print(kw_list2)
-    rand=random.randint(0,4)
-    kw_list2.insert(0,kw_list1[rand])
-    print(kw_list1,kw_list2)
-
-    # kw_list2 = ['ASOS', 'Currys', 'Forever 21', 'John Lewis', 'Marks and Spencer']
-    pytrends2 = TrendReq(retries=10, backoff_factor=0.5)
-    pytrends1.build_payload(kw_list1, geo='GB', timeframe="today 12-m")
-    pytrends2.build_payload(kw_list2, geo='GB', timeframe="today 12-m")
-
-    # pytrends.build_payload(kw_list,geo='UK',timeframe='today 1-y')
-    df1 = pytrends1.interest_over_time()
-    df2 = pytrends2.interest_over_time()
-    # print(df1,"\n",df2)
-
+def Normalize(list1,list2):
+    firstHalf=list1
+    secondHalf=list2
+    len1=len(firstHalf)
+    len2=len(secondHalf)
+    pytrends1=TrendReq(retries=10,backoff_factor=0.5)
+    pytrends1.build_payload(firstHalf,geo='GB',timeframe="today 12-m")
+    df1=pytrends1.interest_over_time()
     averageList1 = []
-    averageList2 = []
-    for item in kw_list1:
+    for item in firstHalf:
         averageList1.append(df1[item].mean().round(0))
 
-    for item in kw_list2:
+    pytrends2 = TrendReq(retries=10, backoff_factor=0.5)
+    pytrends2.build_payload(secondHalf, geo='GB', timeframe="today 12-m")
+    df2 = pytrends2.interest_over_time()
+    averageList2 = []
+    for item in secondHalf:
         averageList2.append(df2[item].mean().round(0))
-    # print(averageList1, averageList2)
 
-    # normalizing second group using first as reference
-    normalizationFactor = averageList1[rand] / averageList2[0]
+    #since common element is last element of first list
+    #and first element of second list
+
+        # normalizing second group using first as reference
+    normalizationFactor = averageList1[len1-1] / averageList2[0]
     for i in range(len(averageList2)):
         normalisedVal = normalizationFactor * averageList2[i]
         averageList2[i] = normalisedVal.round(0)
-    # print(averageList1, averageList2)
-
-    # since the repeating eCommerce keyword is at index 0 in both lists hence we can omit it from second list
 
     averageList2.pop(0)
-    kw_list2.pop(0)
+    secondHalf.pop(0)
 
-    finalList = averageList1 + averageList2
-
-    # finalList=list(set(averageList1+averageList2))
-    finalKeywords = kw_list1 + kw_list2
-    # print(finalList)
-    # print(finalKeywords)
-
-    # y_pos = np.arange(len(finalKeywords))
-
-
-
-# for dicts
+    finalKeywords=firstHalf+secondHalf
+    finalList=averageList1+averageList2
+    
 
     trendDict = dict(zip(finalKeywords, finalList))
     # print(trendDict)
     # sorting the Dict in descending order
     sortedDict = dict(sorted(trendDict.items(), key=lambda x: x[1], reverse=True))
-    print(f'${fileName}')
-    print(sortedDict)
+    # print("printing final list : " ,sortedDict)
+    return sortedDict
 
 
-    # DF=pd.DataFrame(sortedDict)
-    # DF.to_csv(f'${fileName}')
+def findTopSites(listOfSites,n,fileName):
+    length=len(listOfSites)
+    kw_list1=listOfSites[:5]
+    pytrends1 = TrendReq(retries=10, backoff_factor=0.5)
+    pytrends1.build_payload(kw_list1, geo='GB', timeframe="today 12-m")
+    df1 = pytrends1.interest_over_time()
+    averageList1 = []
+    for item in kw_list1:
+        averageList1.append(df1[item].mean().round(0))
 
+    dictHelper1={}
+    for i in range(len(kw_list1)):
+        dictHelper1[kw_list1[i]]=averageList1[i]
+    # print("DICT 1: ",dictHelper1)
+    # sortedDictHelper = dict(sorted(dictHelper.items(), key=lambda x: x[1], reverse=True))
 
+    #Repeating same steps for Kw_list2
+    kw_list2 = listOfSites[5:]
+    pytrends2 = TrendReq(retries=10, backoff_factor=0.5)
+    pytrends2.build_payload(kw_list2, geo='GB', timeframe="today 12-m")
+    # pytrends.build_payload(kw_list,geo='UK',timeframe='today 1-y')
+    df2 = pytrends2.interest_over_time()
 
-    # in python3 dict.values returns a view of dictionary's value hence needs to be converted to list
-    # print(list(sortedDict.values()),list(sortedDict.keys()))
-    # sortedVals = list(sortedDict.values())
-    # sortedKeys = list(sortedDict.keys())
-    # plt.barh(y_pos, sortedVals, align='center', alpha=0.5)
-    # plt.yticks(y_pos, sortedKeys)
-    # plt.xlabel('average popularity')
-    # plt.show()
+    averageList2 = []
+    for item in kw_list2:
+        averageList2.append(df2[item].mean().round(0))
 
-    # to get top 5  sites in dict format:
+    dictHelper2 = {}
+    for i in range(len(kw_list2)):
+        dictHelper2[kw_list2[i]] = averageList2[i]
+    # print("DICT 2 : ", dictHelper2)
+    # //changes will be updated in dictHElper1
+    dictHelper1.update(dictHelper2)
+    # print("*****DictHelper: ",dictHelper1)
+
+    sortedDictHelper = dict(sorted(dictHelper1.items(), key=lambda x: x[1], reverse=True))
+
+    midIndex=int((len(kw_list1)+len(kw_list2))/2 )
+    middleRangeElement=list(sortedDictHelper.keys())[midIndex]
+    # print("Sorted Helper: ",sortedDictHelper," \n ","middle range item: ",middleRangeElement)
+    list1=[]
+    list2=[]
+    for key in list(sortedDictHelper.keys())[0:midIndex+1]:
+        list1.append(key)
+    for key in list(sortedDictHelper.keys())[midIndex:]:
+        list2.append(key)
+ 
+
+    sortedDict=Normalize(list1,list2)
     resDict = dict(itertools.islice(sortedDict.items(), n))  
-
-    # topECommerce = []
-    # print(list(sortedDict))
-    # for site in list(sortedDict)[0:n]:
-    #     topECommerce.append(site)
-    # return topECommerce
     return resDict
     print(resDict)
-
-
